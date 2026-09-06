@@ -8,6 +8,7 @@
 **Instruções:** 
 
 **.** Instalar o Dataset que tem os dados 
+
 **.** Acesse o link para o notebook virtual 
 
 **Resumo:**Os dados fornecidos são importantes para fazer o diagnóstico dos pacientes e descobrir o que eles têm. Os resultados formam dados mais definidos e mais precisos. 
