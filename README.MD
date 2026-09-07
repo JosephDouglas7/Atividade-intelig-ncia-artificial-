@@ -1,8 +1,10 @@
 ## Nome: Joseph Douglas Moura Batista
 
-**Matrícula:** 20230002504  
+**Matrícula:** 20230002504 
+
 **Dataset:** [Dataset](https://www.kaggle.com/datasets/mobeenfatimah/stroke-risk-prediction-dataset?resource=download) 
-**notebook virtual:**[]()
+
+**notebook virtual:**[notebook_virtual](https://colab.research.google.com/drive/1b2oPGSGeNmbRFJGXPca_7GPF1b7122vT?usp=sharing)
 
 ## Descrição: Banco de dados de pacientes de um hospital, o objetivo é aplicar os ensinamentos das aulas práticas usando esses dados.  
 
