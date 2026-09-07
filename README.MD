@@ -13,3 +13,5 @@
    . Acesse o link para o notebook virtual 
 
 ## Principais resultados:   
+- Para regressão, a variável alvo escolhida foi 'peso' 
+- Para classificação, a variável alvo foi 'colesterol total'
