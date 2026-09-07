@@ -4,9 +4,9 @@
 **Dataset:** [Dataset](https://www.kaggle.com/datasets/mobeenfatimah/stroke-risk-prediction-dataset?resource=download) 
 **notebook virtual:**[]()
 
-**Descrição:** Banco de dados de pacientes de um hospital, o objetivo é aplicar os ensinamentos das aulas práticas usando esses dados.  
+## Descrição: Banco de dados de pacientes de um hospital, o objetivo é aplicar os ensinamentos das aulas práticas usando esses dados.  
 
-**Instruções:** 
+## Instruções:  
 
    . Instalar o Dataset que tem os dados 
 
