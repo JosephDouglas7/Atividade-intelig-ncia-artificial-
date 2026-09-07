@@ -8,10 +8,11 @@
 
 ## Instruções:  
 
-   . Instalar o Dataset que tem os dados 
+   - Instalar o Dataset que tem os dados 
 
-   . Acesse o link para o notebook virtual 
+   - Acesse o link para o notebook virtual 
 
 ## Principais resultados:   
 - Para regressão, a variável alvo escolhida foi 'peso' 
-- Para classificação, a variável alvo foi 'colesterol total'
+- Para classificação, a variável alvo foi 'colesterol total' 
+- Features mais relevantes: 'df_limpo'
