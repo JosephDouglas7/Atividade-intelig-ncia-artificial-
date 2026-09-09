@@ -18,3 +18,6 @@
 - Para regressão, a variável alvo escolhida foi 'peso' 
 - Para classificação, a variável alvo foi 'colesterol total' 
 - Features mais relevantes: 'df_limpo'
+
+**contato** 
+- Email: josephdouglas842@gmail.com 
