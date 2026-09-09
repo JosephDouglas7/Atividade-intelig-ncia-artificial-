@@ -1,0 +1,533 @@
+import pandas as pd
+import numpy as np
+
+# Visualização
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Estatística
+from scipy import stats
+
+# Machine Learning (pré-processamento e seleção de features)
+from sklearn.preprocessing import (
+    OneHotEncoder, OrdinalEncoder, LabelEncoder,
+    MinMaxScaler, StandardScaler
+)
+from sklearn.feature_selection import SelectKBest, f_classif, f_regression, RFE
+from sklearn.linear_model import LogisticRegression, LinearRegression
+from sklearn.ensemble import RandomForestRegressor
+
+# Configurações visuais
+sns.set_theme(style="whitegrid")
+plt.rcParams["figure.figsize"] = (9, 5)
+pd.set_option("display.max_columns", 50)
+
+print("Bibliotecas carregadas com sucesso!")
+
+# Carregamento do dataset
+df = pd.read_csv("stroke_risk_prediction_dataset.csv", sep=",", encoding="utf-8")
+
+print(f"O dataset foi carregado com sucesso!")
+print(f"Dimensões: {df.shape[0]} linhas x {df.shape[1]} colunas")
+
+#Exiba as primeiras linhas do dataset para uma visão geral.
+df.head()
+
+#Exiba as últimas linhas do dataset para uma visão geral.
+df.tail()
+
+#Verifica as dimensões do dataset.
+print("Formato (linhas, colunas):", df.shape)
+print("\nNomes das colunas:")
+print(df.columns.tolist())
+
+# Identifique os tipos de dados de cada coluna.
+df.info()
+
+#Identifique os tipos de dados de cada coluna.
+df.dtypes.value_counts()
+
+#Gere umresumo estatístico das variáveis numéricas.
+df.describe()
+
+#Identifique os tipos de dados de cada coluna.
+df.describe(include="all").T.head(15)
+
+#cardinalidade e distribuição de classes
+
+df = pd.read_csv("stroke_risk_prediction_dataset.csv")
+
+# Estatísticas descritivas transpostas
+desc = df.describe(include="all").T
+
+# Ordenando pela coluna 'unique' (cardinalidade)
+cardinalidade = desc.sort_values(by="unique", ascending=False)
+
+# Exibindo as 15 primeiras variáveis com maior cardinalidade
+print(cardinalidade.head(15))
+
+# Distribuição de uma variável categórica de interesse
+df = pd.read_csv("stroke_risk_prediction_dataset.csv")
+
+# Verificar quais colunas existem no dataset
+print("Colunas disponíveis:", df.columns.tolist())
+
+# distribuição da variável categórica 'Blood_Pressure_Systolic'
+if "Blood_Pressure_Systolic" in df.columns:
+    print(df["Blood_Pressure_Systolic"].value_counts())
+else:
+    print("A coluna 'Blood_Pressure_Systolic' não existe no dataset. Escolha uma das colunas listadas acima.")
+
+#Calcula a quantidade e a porcentagem de valores ausentes por coluna
+ausentes = df.isnull().sum()
+ausentes_pct = (ausentes / len(df) * 100).round(2)
+
+tabela_ausentes = pd.DataFrame({"qtd_ausentes": ausentes, "pct_ausentes": ausentes_pct})
+tabela_ausentes = tabela_ausentes[tabela_ausentes["qtd_ausentes"] > 0].sort_values("qtd_ausentes", ascending=False)
+tabela_ausentes
+
+#Visualize a distribuição dos valores ausentes.
+plt.figure(figsize=(10, 8))
+tabela_ausentes["pct_ausentes"].head(20).sort_values().plot(kind="barh", color="#2E75B6")
+plt.xlabel("% de valores ausentes")
+plt.title("Top 20 colunas com mais valores ausentes")
+plt.tight_layout()
+plt.show()
+
+#Dados duplicados
+df = pd.read_csv("stroke_risk_prediction_dataset.csv")
+
+# Número de linhas totalmente duplicadas
+duplicados = df.duplicated().sum()
+print(f"Número de linhas totalmente duplicadas: {duplicados}")
+
+# Número de linhas duplicadas ignorando a coluna 'Id'
+if "Id" in df.columns:
+    duplicados_sem_id = df.drop(columns=["Id"]).duplicated().sum()
+    print(f"Número de linhas duplicadas (ignorando o Id): {duplicados_sem_id}")
+else:
+    print("A coluna 'Id' não existe no dataset. Verifique as colunas disponíveis:", df.columns.tolist())
+
+# verificar se variáveis numéricas possuem valores fisicamente impossíveis
+# Carregar o dataset a partir do arquivo CSV
+df = pd.read_csv("stroke_risk_prediction_dataset.csv")
+
+# Ano de construção mínimo e máximo
+if "YearBuilt" in df.columns:
+    print("Ano de construção mínimo e máximo:", df["YearBuilt"].min(), "-", df["YearBuilt"].max())
+else:
+    print("A coluna 'YearBuilt' não existe no dataset. Colunas disponíveis:", df.columns.tolist())
+
+# Área do terreno mínima
+if "LotArea" in df.columns:
+    print("Área do terreno (LotArea) mínima:", df["LotArea"].min())
+    print("Existem áreas negativas ou zero?", (df["LotArea"] <= 0).sum())
+else:
+    print("A coluna 'LotArea' não existe no dataset. Colunas disponíveis:", df.columns.tolist())
+
+#verificar se alguma coluna que deveria ser numérica foi carregada como texto
+for col in df.columns:
+    if df[col].dtype == "object":
+        amostra = df[col].dropna().unique()[:5]
+        # nada a corrigir aqui automaticamente — apenas inspeção
+        pass
+
+print("Total de colunas do tipo object (texto):", (df.dtypes == "object").sum())
+print("Total de colunas numéricas:", df.select_dtypes(include=np.number).shape[1])
+
+#tratamento inicial de valores ausentes
+#aplicar três estratégias clássicas em colunas diferentes
+df = pd.read_csv("stroke_risk_prediction_dataset.csv")
+
+# imputação pela mediana (variável numérica com poucos ausentes)
+if "std" in df.columns:
+    mediana_lotfrontage = df["std"].median()
+    print("Mediana de std:", mediana_lotfrontage)
+else:
+    print("A coluna 'qtd_ausentes' não existe no dataset. Colunas disponíveis:", df.columns.tolist())
+
+# imputação pela moda (variável categórica com poucos ausentes)
+if "qtd_ausentes" in df.columns:
+    moda_mszoning = df["qtd_ausentes"].mode()[0]
+    print("Moda de qtd_ausentes:", moda_mszoning)
+else:
+    print("A coluna 'qtd_ausentes' não existe no dataset. Colunas disponíveis:", df.columns.tolist())
+
+if "qtd_ausentes" in df.columns:
+    linhas_antes = df.shape[0]
+    linhas_sem_zoning_ausente = df.dropna(subset=["qtd_ausentes"]).shape[0]
+    print(f"Linhas antes: {linhas_antes} | Linhas se removêssemos ausentes de qtd_ausentes: {linhas_sem_zoning_ausente}")
+
+#Filtragem de dados
+
+import pandas as pd
+arquivo = "stroke_risk_prediction_dataset.csv"  # substitua pelo nome do seu arquivo
+df = pd.read_csv(arquivo)
+
+# Criar cópia para limpeza
+df_limpo = df.copy()
+
+# Selecionar colunas de texto
+colunas_texto = df_limpo.select_dtypes(include="object").columns
+
+# Remover espaços extras
+for col in colunas_texto:
+    df_limpo[col] = df_limpo[col].astype(str).str.strip()
+
+print("Espaços removidos das colunas de texto.")
+
+# Opcional: salvar o resultado em um novo arquivo
+df_limpo.to_csv("dados_limpos.csv", index=False)
+print("Arquivo 'dados_limpos.csv' salvo com sucesso.")
+
+#tratamento de valores ausentes por significado
+
+df = pd.DataFrame({
+    'Patient_ID': [50000.0, 49781.0, 50000],
+    'Age': [49781.000000, 53.903096, 21.070953],
+})
+
+colunas_na_significativo = [
+    'Patient_ID', 'Age', 'Gender', 'Country',
+    'Height_cm', 'Weight_kg', 'BMI', 'Blood_Pressure_Systolic',
+    'Blood_Pressure_Diastolic', 'Heart_Rate', 'Blood_Glucose',
+    'HbA1c', 'Total_Cholesterol', 'HDL', 'LDL', 'Triglycerides',
+    'Smoking_Status', 'Alcohol_Consumption', 'Physical_Activity_Level',
+    'Sleep_Hours', 'Stress_Level', 'Diet_Quality', 'Family_History_Stroke',
+    'Family_History_Heart_Disease', 'Diabetes', 'Hypertension', 'Heart_Disease',
+    'Previous_TIA', 'Atrial_Fibrillation', 'Chronic_Kidney_Disease', 'Medication_Adherence',
+    'Exercise_Hours_Per_Week', 'Daily_Walking_Minutes', 'Work_Type', 'Residence_Type',
+    'Air_Pollution_Exposure', 'Stroke_Risk_Score', 'AI_Health_Recommendation',
+    'Doctor_Consultation_Needed', 'Stroke_Risk'
+]
+
+for col in colunas_na_significativo:
+    if col in df.columns:  # só aplica se a coluna existir
+        df[col] = df[col].replace("nan", np.nan)
+        df[col] = df[col].fillna("Nao_Possui")
+
+print("Valores ausentes com significado tratados como categoria explícita.")
+
+# Colunas numéricas associadas a itens que podem não existir (ex.: área de garagem = 0 se não há garagem)
+colunas_num_zero = ["Patient_ID", "Age", "Gender", "Country", "Height_cm", "Weight_kg"]
+
+for col in colunas_num_zero:
+    df_limpo[col] = df_limpo[col].fillna(0)
+
+print("Valores ausentes numéricos (itens inexistentes) preenchidos com 0.")
+
+#tratamento de valores realmente ausentes
+# Verificando o que ainda resta de ausente
+ausentes_restantes = df_limpo.isnull().sum()
+ausentes_restantes = ausentes_restantes[ausentes_restantes > 0].sort_values(ascending=False)
+ausentes_restantes
+
+#tratamento de valores ausentes e mediana/moda de valores ausentes
+for col in ausentes_restantes.index:
+    if df_limpo[col].dtype in [np.float64, np.int64]:
+        valor = df_limpo[col].median()
+        df_limpo[col] = df_limpo[col].fillna(valor)
+    else:
+        valor = df_limpo[col].mode()[0]
+        df_limpo[col] = df_limpo[col].fillna(valor)
+
+print("Valores ausentes remanescentes tratados com mediana/moda.")
+print("Total de valores ausentes após o tratamento:", df_limpo.isnull().sum().sum())
+
+#padronização de categorias
+df_limpo["Smoking_Status"] = df_limpo["Smoking_Status"].str.strip().str.title()
+df_limpo["Smoking_Status"].unique()[:10]
+
+#conversão de tipos
+
+df = pd.read_csv("stroke_risk_prediction_dataset.csv")   # lê o CSV
+df_limpo = df.copy()              # cria cópia
+df_limpo["Smoking_Status"] = df_limpo["Smoking_Status"].astype(str)
+print(df_limpo["Smoking_Status"].dtype)
+print(df_limpo["Smoking_Status"].value_counts().head())
+
+#ordenação de colesterol dos pacientes
+
+
+# Carregar CSV
+df = pd.read_csv("stroke_risk_prediction_dataset.csv")
+df_limpo = df.copy()
+
+# Converter para float
+df_limpo["Total_Cholesterol"] = df_limpo["Total_Cholesterol"].astype(float)
+
+# Criar ranking ordinal
+df_limpo["Total_Cholesterol_Ordinal"] = df_limpo["Total_Cholesterol"].rank(method="dense").astype("Int64")
+
+# Mostrar valores únicos ordenados
+print(
+    df_limpo[["Total_Cholesterol_Ordinal"]]
+    .drop_duplicates()
+    .sort_values("Total_Cholesterol_Ordinal")
+)
+
+#label encoding
+#codificação numérica não introduz uma falsa relação de ordem.
+
+label_encoder = LabelEncoder()
+df_limpo["Total_Cholesterol_encoded"] = label_encoder.fit_transform(df_limpo["Total_Cholesterol"])
+
+df_limpo[["Total_Cholesterol", "Total_Cholesterol_encoded"]].drop_duplicates()
+
+#Ordenação de total_cholesterol
+
+# Carregar CSV
+df = pd.read_csv("stroke_risk_prediction_dataset.csv")
+df_limpo = df.copy()
+
+# Criar encoder
+label_encoder = LabelEncoder()
+df_limpo["Total_Cholesterol_encoded"] = label_encoder.fit_transform(df_limpo["Total_Cholesterol"])
+
+print(
+    df_limpo[["Total_Cholesterol", "Total_Cholesterol_encoded"]]
+    .drop_duplicates()
+    .sort_values("Total_Cholesterol_encoded")
+) 
+
+#one-hot encoding
+#não introduz relação de ordem
+df_onehot = pd.get_dummies(df_limpo, columns=["Sleep_Hours"], prefix="Sleep_Hours")
+df_onehot[[c for c in df_onehot.columns if "Sleep_Hours" in c]].head() 
+
+#Alta cardinalidade
+# HDL possui muitas categorias distintas
+print(f"HDL possui {df_limpo['HDL'].nunique()} categorias distintas.")
+
+# Se aplicássemos One-Hot Encoding diretamente:
+colunas_geradas = pd.get_dummies(df_limpo["HDL"]).shape[1]
+print(f"One-Hot Encoding geraria {colunas_geradas} novas colunas — alta cardinalidade!")
+
+#Alta cardinalidade
+#agrupar categorias raras em "outros " antes de aplicar o one-hot encoding
+frequencia = df_limpo["BMI"].value_counts()
+categorias_frequentes = frequencia[frequencia >= 30].index
+
+df_limpo["BMI"] = df_limpo["BMI"].apply(
+    lambda x: x if x in categorias_frequentes else "Outros"
+)
+
+print(f"Categorias após agrupamento: {df_limpo['BMI'].nunique()}")
+df_limpo["BMI"].value_counts() 
+
+#calcular as principais medidas de tedência central e dispersão para variáveis numéricas relevantes
+
+# Exemplo: carregando os dados de um arquivo CSV
+df_limpo = pd.read_csv("stroke_risk_prediction_dataset.csv")
+
+variaveis_numericas = ["Height_cm", "Weight_kg", "Heart_Rate", "Blood_Glucose", "Total_Cholesterol"]
+
+resumo = pd.DataFrame({
+    "media": df_limpo[variaveis_numericas].mean(),
+    "mediana": df_limpo[variaveis_numericas].median(),
+    "moda": df_limpo[variaveis_numericas].mode().iloc[0],
+    "variancia": df_limpo[variaveis_numericas].var(),
+    "desvio_padrao": df_limpo[variaveis_numericas].std(),
+    "amplitude": df_limpo[variaveis_numericas].max() - df_limpo[variaveis_numericas].min(),
+})
+
+print(resumo.round(2))
+
+#quartis do peso de pacientes
+df_limpo["Weight_kg"].quantile([0.25, 0.5, 0.75]) 
+
+# Percentis do peso dos pacientes
+df_limpo["Weight_kg"].quantile([0.05, 0.10, 0.90, 0.95])
+
+#Variável discreta X contínua
+#valores discretos de horas de sono
+#valores contínuos de pesos dos pacientes
+print("Valores únicos de Sleep_Hours (discreta):", sorted(df_limpo['Sleep_Hours'].unique()))
+print("\nWeight_kg (contínua) — min:", df_limpo['Weight_kg'].min(), "| max:", df_limpo['Weight_kg'].max())
+
+#Comparação da média e mediana, se tiver muito diferentes, isso é um indício de assimetria na distribuição
+print("Média de Weight_kg:", df_limpo["Weight_kg"].mean().round(2))
+print("Mediana de Weight_kg:", df_limpo["Weight_kg"].median())
+
+#boxplot de pesos de pacientes
+
+df = pd.read_csv("stroke_risk_prediction_dataset.csv")
+
+plt.figure(figsize=(8,5))
+sns.boxplot(y=df["Weight_kg"], color="#2E75B6")
+plt.title("Boxplot — Peso (kg)")
+plt.ylabel("Peso (kg)")
+plt.show() 
+
+#método IQR(Intervalo Interquartil)
+# Exemplo de criação de DataFrame (substitua pelos seus dados reais)
+# weight_kg = peso dos pacientes
+df_limpo = pd.read_csv("stroke_risk_prediction_dataset.csv")
+
+# Cálculo dos quartis e IQR
+Q1 = df_limpo["Weight_kg"].quantile(0.25)
+Q3 = df_limpo["Weight_kg"].quantile(0.75)
+IQR = Q3 - Q1
+
+# Definição dos limites
+limite_inferior = Q1 - 1.5 * IQR
+limite_superior = Q3 + 1.5 * IQR
+
+# Identificação dos outliers
+outliers_iqr = df_limpo[(df_limpo["Weight_kg"] < limite_inferior) | (df_limpo["Weight_kg"] > limite_superior)]
+
+# Impressão dos resultados
+print(f"Q1 = {Q1} | Q3 = {Q3} | IQR = {IQR}")
+print(f"Limite inferior: {limite_inferior:.2f} | Limite superior: {limite_superior:.2f}")
+print(f"Número de outliers detectados (IQR): {len(outliers_iqr)}")
+
+#método z-score
+
+
+df_limpo = pd.read_csv("stroke_risk_prediction_dataset.csv")
+# Cálculo do Z-score
+df_limpo["zscore_Weight_kg"] = np.abs(stats.zscore(df_limpo["Weight_kg"]))
+
+# Filtragem dos outliers
+outliers_zscore = df_limpo[df_limpo["zscore_Weight_kg"] > 3]
+
+# Resultados
+print(f"Número de outliers detectados (Z-score > 3): {len(outliers_zscore)}")
+print(outliers_zscore[["Weight_kg", "zscore_Weight_kg"]].sort_values("zscore_Weight_kg", ascending=False).head())
+
+#Discussão sobre o tratamento
+# height_cm = altura dos pacientes
+# weight_kg = peso dos pacientes
+# heart_rate = taxa cardiaca dos pacientes
+# BMI = Indice de massa corporal dos pacientes
+# blood_glucose = nível de glicose no sangue dos pacientes
+cols = ["Height_cm", "Weight_kg", "Heart_Rate", "BMI", "Blood_Glucose"]
+
+# Verifica se há outliers antes de ordenar
+if not outliers_iqr.empty:
+    resultado = outliers_iqr[cols].sort_values("Weight_kg", ascending=False).head(10)
+    print(resultado)
+else:
+    print("Nenhum outlier encontrado pelo método IQR.")
+
+#aplicação da técnica de limitação(capping).
+# height_com = altura dos pacientes
+df_capping = df_limpo.copy()
+df_capping["Height_cm_capped"] = df_capping["Height_cm"].clip(lower=limite_inferior, upper=limite_superior)
+
+print("Máximo antes do capping:", df_capping["Height_cm"].max())
+print("Máximo depois do capping:", df_capping["Height_cm_capped"].max())
+
+#Calcular um conjunto completo de medidas estatísticas, para compreensão melhor
+#da distribuição das variáveis numéricas.
+# height_cm = altura dos pacientes
+def resumo_estatistico(serie):
+    return pd.Series({
+        "média": serie.mean(),
+        "mediana": serie.median(),
+        "desvio_padrão": serie.std(),
+        "variância": serie.var(),
+        "Q1": serie.quantile(0.25),
+        "Q3": serie.quantile(0.75),
+        "assimetria": serie.skew(),
+        "curtose": serie.kurtosis(),
+    })
+
+resumo_estatistico(df_limpo["Height_cm"]).round(3) 
+
+#Resumo_estatistico do Calculo de um conjunto completo de medidas estatísticas
+# height_cm = altura dos pacientes
+resumo_estatistico(df_limpo["SalePrice"] if "SalePrice" in df_limpo.columns else df_limpo["Height_cm"]).round(3)
+
+#Interpretando a assimetria
+#Assimetria ≈ 0: distribuição aproximadamente simétrica.
+#Assimetria > 0: cauda mais longa à direita (valores altos mais dispersos).
+#Assimetria < 0: cauda mais longa à esquerda.
+#height_cm = altura dos pacientes
+#weight_kg = peso dos pacientes
+#blood_glucose = nível de glicose no sangue dos pacientes
+variaveis = ["Height_cm", "Weight_kg", "Blood_Glucose"]
+
+tabela_assimetria = pd.DataFrame({
+    "assimetria": df_limpo[variaveis].skew(),
+    "curtose": df_limpo[variaveis].kurtosis()
+}).round(3)
+
+tabela_assimetria 
+
+# Carregando dataset
+df = pd.read_csv("stroke_risk_prediction_dataset.csv")
+
+# 1. Histograma + densidade da idade
+plt.figure(figsize=(8,5))
+sns.histplot(df["Age"], kde=True, bins=10, color="skyblue")
+plt.title("Distribuição da Idade dos Pacientes")
+plt.xlabel("Idade")
+plt.ylabel("Frequência")
+plt.show()
+
+# 2. Scatter plot: relação entre idade e nível de glicose
+plt.figure(figsize=(8,5))
+sns.scatterplot(data=df, x="Age", y="Blood_Glucose", hue="Gender", style="Hypertension")
+plt.title("Idade vs Nível de Glicose")
+plt.xlabel("Idade")
+plt.ylabel("Glicose Média")
+plt.show()
+
+# 3. Gráfico de barras: contagem por hipertensão
+plt.figure(figsize=(8,5))
+sns.countplot(data=df, x="Hypertension", palette="Set2")
+plt.title("Distribuição de Hipertensão")
+plt.xlabel("Hipertensão (0=Não, 1=Sim)")
+plt.ylabel("Número de Pacientes")
+plt.show()
+
+# 4. Pair plot para variáveis numéricas
+sns.pairplot(df[["Age", "Blood_Glucose", "BMI"]], diag_kind="kde")
+plt.suptitle("Pair Plot das Variáveis Numéricas", y=1.02)
+plt.show()
+
+# 5. Gráfico de pizza para sexo
+plt.figure(figsize=(6,6))
+df["Gender"].value_counts().plot.pie(autopct="%1.1f%%", colors=["lightcoral", "lightblue"])
+plt.title("Distribuição por Sexo")
+plt.ylabel("")
+plt.show()
+
+#análise de correlação
+
+# Carregar os dados reais do CSV
+df = pd.read_csv("stroke_risk_prediction_dataset.csv")
+
+# Selecionar apenas colunas numéricas
+df_numeric = df.select_dtypes(include=["float64", "int64"])
+
+# Cálculo da matriz de correlação
+corr_matrix = df_numeric.corr()
+
+print("Matriz de correlação:")
+print(corr_matrix)
+
+# Visualização com heatmap aprimorado
+plt.figure(figsize=(12,10))
+sns.heatmap(
+    corr_matrix,
+    annot=True,            # mostra os valores numéricos
+    fmt=".2f",             # formata com duas casas decimais
+    cmap="Spectral",       # paleta de cores vibrante e intuitiva
+    center=0,              # centraliza em zero
+    linewidths=0.7,        # linhas divisórias mais destacadas
+    square=True,           # células quadradas para simetria
+    cbar_kws={"shrink": 0.8, "label": "Coeficiente de Correlação"}
+)
+plt.title("Matriz de Correlação — Variáveis Clínicas", fontsize=16, pad=20, weight="bold")
+plt.xticks(rotation=45, ha="right", fontsize=10)
+plt.yticks(rotation=0, fontsize=10)
+plt.tight_layout()
+plt.show()
+
+
+
+
+
+
