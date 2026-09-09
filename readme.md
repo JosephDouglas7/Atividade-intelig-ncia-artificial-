@@ -23,4 +23,10 @@ Banco de dados de pacientes de um hospital, o objetivo é aplicar os ensinamento
 - Features mais relevantes: 'df_limpo'
 
 **contato** 
-- Email: josephdouglas842@gmail.com 
+- Email: josephdouglas842@gmail.com
+
+**Referências** 
+
+- [Copilot](https://copilot.microsoft.com/) 
+
+- [Pratica_IA_01](https://colab.research.google.com/drive/1J0GXEYAUHFoimZz0d1bcEwdLEVAk4Tny?usp=sharing)
