@@ -6,7 +6,8 @@
 
 **notebook virtual:** [Notebook_virtual](https://colab.research.google.com/drive/1b2oPGSGeNmbRFJGXPca_7GPF1b7122vT?usp=sharing)
 
-## Descrição: Banco de dados de pacientes de um hospital, o objetivo é aplicar os ensinamentos das aulas práticas usando esses dados.  
+## Descrição:  
+Banco de dados de pacientes de um hospital, o objetivo é aplicar os ensinamentos das aulas práticas usando esses dados.  
 
 ## Instruções:  
 
