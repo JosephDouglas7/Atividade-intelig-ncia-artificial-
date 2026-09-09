@@ -13,7 +13,9 @@ Banco de dados de pacientes de um hospital, o objetivo é aplicar os ensinamento
 
    - Instalar o Dataset que tem os dados 
 
-   - Acesse o link para o notebook virtual 
+   - Acesse o link para o notebook virtual
+
+   - No notebook virtual click no ícone de arquivo no lado esquerdo, em seguida click no ícone de seta para cima para fazer upload do dataset baixado
 
 ## Principais resultados:   
 - Para regressão, a variável alvo escolhida foi 'peso' 
